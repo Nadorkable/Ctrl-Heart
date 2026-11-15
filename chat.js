@@ -16,6 +16,8 @@
     thriving: k => k + ' is thriving'
   };
 
+  
+
   function addDrama(d) {
     const k = nice(d.key);
     const li = document.createElement('li');
@@ -63,10 +65,35 @@ document.addEventListener('keydrama', e => {
 });
 
 function dramaTick() {
+function nextMessage() {
+  if (!paused) {
+    const ev = recent.pop();
+    recent = [];
+    if (ev && LINES[ev.type]) {
+      const k = nice(ev.key);
+      addMsg(k, pick(LINES[ev.type]).replaceAll('{key}', k));
+    } else {
+      const [who, text] = personalityLine();
+      addMsg(who, text);
+    }
+  }
+  setTimeout(nextMessage, 5000 + Math.random() * 2000);
+}
   const d = dramaQueue.pop();     // show the NEWEST, so it stays relevant
   dramaQueue = [];                // throw away the rest
   if (d) addDrama(d);
 }
+let paused = false;
+document.addEventListener('ctrl:pause',  () => { paused = true; });
+document.addEventListener('ctrl:resume', () => { paused = false; });
+document.addEventListener('ctrl:reset', () => {
+  paused = false;
+  recent = [];
+  dramaQueue = [];
+  dramaEl.innerHTML = '';
+  gcEl.innerHTML = '';
+});
+
 
   document.addEventListener('ctrl:start', () => {
     setTimeout(nextMessage, 3000);
