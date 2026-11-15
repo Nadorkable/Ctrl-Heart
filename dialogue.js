@@ -1,47 +1,41 @@
 // dialogue.js: all the chat lines. {key} = the key involved
 const LINES = {
   blocked: [
-    "that's it. i'm blocking you.",
-    "talk to the hand. i'm a keycap now.",
-    "you ignored me for too long. goodbye.",
-    "{key} has left the chat. emotionally."
+    "dhmu",
+    "i quit",
+    "you're the worst",
+    "do i mean nothing to you"
   ],
   jealous: [
-    "wow. so we're just pressing the neighbours now?",
-    "i see how it is. everyone but me.",
-    "not me watching you spam the key next to me.",
-    "{key} is fine. {key} is totally fine."
+    "what does he have that i dont",
+    "what does she have that i dont",
+    "im not sharing",
+    "pick me, choose me, love me."
   ],
   fading: [
-    "hello? is anyone there?",
-    "it's been so long since you touched me...",
-    "i'm not crying. you're crying.",
-    "i can feel myself fading, {key} out."
+    "imy",
+    "it's been so long since you touched me",
+    "come back pls",
+    "hey..."
   ],
   thriving: [
-    "i'm so loved right now!!",
-    "this is the best day of my life",
-    "{key} is thriving. no further questions.",
-    "finally. appreciation."
+    "love you too",
+    "lets get married",
+    ":DD",
+    "ok this is a lot"
   ],
   // personality lines, said by a random key when nothing is happening
   personality: {
-    Q: ["don't text me", "i'm only here to start words with u"],
-    W: ["i'm the favourite, deal with it", "pressed 7 times today. i'm winning"],
-    E: ["i'm in every word. you're welcome", "overworked and underappreciated"],
-    A: ["i'm just a vowel, why am i like this", "first letter. best letter."],
-    S: ["i'm literally the plural of everything", "s tier. obviously"],
-    Space: ["i'm the biggest key and nobody checks on me", "trust issues. you know why."],
-    Shift: ["i hold everything up and get no credit", "i make letters louder. thank me."],
-    Z: ["nobody ever types me", "i'm basically decorative"],
-    X: ["marks the spot. never gets pressed.", "x gon' give it to ya (nobody)"],
-    Delete: ["i'm the only one who fixes your mistakes", "please stop typing and deleting me"]
+    Q: ["don't text me", "I hate s"],
+    E: ["giveme break pls"],
+    S: ["it likes me best", "q's the worst"],
+    Space: ["hiii", "im overworked"],
+    Z: ["nobody ever types me"],
+    Delete: ["i'm the only one who fixes your mistakes"]
   },
   generic: [
-    "does anyone else feel... pressed?",
-    "someone check on the spacebar",
-    "i just want to be typed with intention",
-    "this keyboard group chat needs a moderator",
+    "does anyone feel pressed?",
+    "i dont like this game",
     "who touched my left side"
   ]
 };
