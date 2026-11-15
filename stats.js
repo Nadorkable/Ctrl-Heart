@@ -95,8 +95,6 @@
     morale.textContent = 'keyboard morale: ' + mood.toUpperCase();
     morale.dataset.mood = mood;
 
-    const alive = list.filter(k => !k.blocked).sort((a, b) => b.pct - a.pct);
-    showFavourite(alive[0], alive[alive.length - 1]);
   }
 
   update();
