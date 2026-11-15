@@ -146,13 +146,13 @@
     const isModifier = /^(Control|Meta|Alt|Shift)/.test(e.code);
     if ((e.ctrlKey || e.metaKey) && !isModifier) return;     // let Ctrl+R / Cmd+R still refresh
 
+    if (k.blocked && !paused) {
+      // blocked key: nothing types, nothing counts. just a silly sound + a roast.
+      e.preventDefault();
+      if (!e.repeat) nope(k);
+      return;
+    }
     if (e.target && e.target.id === 'notepad') {
-      // typing in notes.txt: normal keys type, blocked keys refuse
-      if (k.blocked && !paused) {
-        e.preventDefault();                                  // nothing appears. it's over.
-        if (!e.repeat) nope(k);
-        return;
-      }
       if (e.code === 'Tab') e.preventDefault();              // stay in the notepad
     } else {
       e.preventDefault();                                    // stop Space scrolling, Tab jumping
@@ -178,7 +178,52 @@
     render();
   }
 
-  // a blocked key was pressed in notes.txt: say so under the notepad
+  // SILLY SOUNDS for pressing a blocked key. Made with the browser's own synth
+  // (Web Audio), so there are no sound files to download or lose.
+  let audio = null;
+  let lastSound = 0;
+  // browsers only allow sound after a click, and START TYPING is that click
+  document.addEventListener('ctrl:start', () => {
+    try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (err) { audio = null; }
+  });
+
+  // one tone that slides from one pitch to another
+  function tone(type, from, to, start, length, volume = 0.18) {
+    const t0 = audio.currentTime + start;
+    const osc = audio.createOscillator();
+    const gain = audio.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(from, t0);
+    osc.frequency.exponentialRampToValueAtTime(to, t0 + length);
+    gain.gain.setValueAtTime(volume, t0);
+    gain.gain.exponentialRampToValueAtTime(0.001, t0 + length);
+    osc.connect(gain).connect(audio.destination);
+    osc.start(t0);
+    osc.stop(t0 + length + 0.02);
+  }
+
+  const SOUNDS = [
+    () => tone('sine', 320, 70, 0, 0.18, 0.3),                       // bonk
+    () => { tone('square', 200, 200, 0, 0.11, 0.08);                 // nuh-uh buzzer
+            tone('square', 150, 150, 0.14, 0.16, 0.08); },
+    () => tone('triangle', 900, 180, 0, 0.22, 0.22),                 // sad slide whistle
+    () => { tone('sawtooth', 300, 290, 0, 0.14, 0.07);               // wah wah wahhh
+            tone('sawtooth', 270, 260, 0.16, 0.14, 0.07);
+            tone('sawtooth', 240, 180, 0.32, 0.32, 0.07); },
+    () => { tone('sine', 700, 1400, 0, 0.06, 0.15);                  // boing
+            tone('sine', 1400, 300, 0.06, 0.18, 0.15); },
+  ];
+
+  function nopeSound() {
+    if (!audio) return;
+    const now = performance.now();
+    if (now - lastSound < 120) return;                       // mashing a dead key = not a wall of noise
+    lastSound = now;
+    if (audio.state === 'suspended') audio.resume();
+    SOUNDS[Math.floor(Math.random() * SOUNDS.length)]();
+  }
+
+  // a blocked key was pressed: silly sound + a roast under the notepad
   const NOPE_LINES = [
     '{key} blocked you. it is not typing that.',
     '{key} has left the chat. and the keyboard.',
@@ -187,6 +232,7 @@
     'you pressed {key}. {key} did not care.',
   ];
   function nope(k) {
+    nopeSound();
     const status = document.getElementById('notepad-status');
     if (!status) return;
     const line = NOPE_LINES[Math.floor(Math.random() * NOPE_LINES.length)];
@@ -256,7 +302,14 @@
       helperSync();
       document.dispatchEvent(new CustomEvent('ctrl:helper', { detail: { on: true } }));
     };
-    es.onmessage = e => press(e.data);                       // a key pressed anywhere on the laptop
+    es.onmessage = e => {
+      if (e.data[0] === '!') {                               // "!KeyQ" = the helper swallowed a blocked key
+        const k = keys[e.data.slice(1)];
+        if (k && k.blocked && !paused) nope(k);
+        return;
+      }
+      press(e.data);                                         // a key pressed anywhere on the laptop
+    };
     es.onerror = () => {
       es.close();
       if (helperOn) document.dispatchEvent(new CustomEvent('ctrl:helper', { detail: { on: false } }));

@@ -111,6 +111,9 @@ def on_key(msg, data):
                         and not paused and not panicked and clients)
         if block_it:
             swallowed.add(code)
+            if code not in held:                      # tell the site once per press (it plays a silly sound)
+                held.add(code)
+                send_to_site("!" + code)
             listener.suppress_event()                 # this key does nothing, anywhere
         if code in held:
             return True                               # holding the key down: count it once
