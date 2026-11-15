@@ -1,11 +1,10 @@
-/* stats.css (Nada): dashboard layout, header pills, favourite child */
+/* stats.css (Nada): dashboard layout, header pills, notes.txt */
 
 /* page layout (the sketch):
      Ctrl+Heart ............................ pills
      notes.txt                      | LIVE DRAMA
      keyboard                       | #keyboard-gc
-     legend                         | RESET PAUSE START
-                                    | favourite child              */
+     legend                         | RESET PAUSE START            */
 #dashboard {
   max-width: 1260px;
   margin: 0 auto;
@@ -16,8 +15,7 @@
     "header   header"
     "notes    drama"
     "keyboard gc"
-    "legend   controls"
-    ".        fav";
+    "legend   controls";
   column-gap: 26px;
   row-gap: 16px;
   align-items: start;
@@ -29,7 +27,7 @@
 #dashboard .cards        { display: contents; }   /* its 3 cards join the grid */
 #dashboard .card:has(#drama) { grid-area: drama; }
 #dashboard .card:has(#gc)    { grid-area: gc; }
-#dashboard #fav              { grid-area: fav; }
+#dashboard #fav              { display: none; }    /* favourite child: removed */
 
 /* Sara's START / PAUSE / RESET: a little row under the chat instead of floating */
 #dashboard #controls {
@@ -86,33 +84,6 @@
   margin: 0 0 10px;
 }
 
-/* favourite child card: compact, mascot on the left, text on the right */
-#fav {
-  display: grid;
-  grid-template-columns: 70px 1fr;
-  grid-template-areas: "title title" "mascot line" "mascot least";
-  align-items: center;
-  column-gap: 12px;
-  min-height: 0;
-}
-#fav h3   { grid-area: title; }
-#mascot   { grid-area: mascot; }
-#fav-line { grid-area: line; align-self: end; }
-#least    { grid-area: least; align-self: start; }
-#mascot {
-  display: block;
-  width: 64px;
-  margin: 0;
-  animation: mascot-bob 1.6s ease-in-out infinite;
-}
-@keyframes mascot-bob {
-  0%, 100% { transform: translateY(0) rotate(-2deg); }
-  50%      { transform: translateY(-4px) rotate(2deg); }
-}
-#fav-line { margin: 0; font-size: 14px; }
-#fav-key { font-family: 'Dela Gothic One', sans-serif; font-weight: 400; }
-#least { margin: 4px 0 0; font-size: 12px; color: var(--hot); }
-
 /* notes.txt: lined paper notepad between the keyboard and the cards */
 #notepad-card {
   padding: 14px 16px 10px;
@@ -166,6 +137,6 @@
   #dashboard {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
-      "header" "notes" "keyboard" "legend" "controls" "drama" "gc" "fav";
+      "header" "notes" "keyboard" "legend" "controls" "drama" "gc";
   }
 }
