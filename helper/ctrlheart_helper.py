@@ -103,7 +103,7 @@ def on_key(msg, data):
             del esc_times[:-3]
             if len(esc_times) == 3 and now - esc_times[0] < 1.5 and not panicked:
                 panicked = True
-                log("ESC x3: everything unblocked until you restart the helper.")
+                log("ESC x3: everything unblocked. click RESET on the site to turn blocking back on.")
             return True
 
         with lock:
@@ -146,7 +146,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         # the website sends {"blocked": ["Space", "KeyQ"], "paused": false}
-        global paused
+        global paused, panicked
         if self.path != "/state":
             self.send_response(404); self.cors(); self.end_headers(); return
         length = int(self.headers.get("Content-Length", 0))
@@ -160,10 +160,24 @@ class Handler(BaseHTTPRequestHandler):
             blocked.clear()
             blocked.update(new_blocked)
             paused = bool(state.get("paused"))
+            # a fresh game (RESET / START) turns Esc x3 mode off again
+            ended_panic = panicked and not new_blocked
+            if ended_panic:
+                panicked = False
+        if ended_panic:
+            log("game was reset: Esc x3 mode is off, blocking works again.")
         if changed:
             real = sorted(new_blocked - NEVER_BLOCK)
-            log(("PAUSED. " if paused else "") +
-                ("blocked on the whole laptop: " + ", ".join(real) if real else "nothing blocked"))
+            if paused:
+                msg = "PAUSED: nothing is blocked while paused."
+            elif not real:
+                msg = "nothing blocked"
+            elif panicked:
+                msg = ("NOT blocking (Esc x3 is on). the site has blocked: " + ", ".join(real) +
+                       ". click RESET on the site to start blocking again.")
+            else:
+                msg = "blocked on the whole laptop: " + ", ".join(real)
+            log(msg)
         self.send_response(204)
         self.cors()
         self.end_headers()
@@ -180,7 +194,8 @@ class Handler(BaseHTTPRequestHandler):
         q = queue.Queue()
         with lock:
             clients.append(q)
-        log("website connected")
+            n = len(clients)
+        log("website connected" + ("" if n == 1 else f" ({n} Ctrl+Heart tabs open: keep just one!)"))
         try:
             while True:
                 try:

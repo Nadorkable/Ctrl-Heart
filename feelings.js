@@ -137,6 +137,7 @@
     });
     render();
     setInterval(fade, SETTINGS.fadeEverySecs * 1000);
+    helperSync();                                            // laptop mode: a fresh game starts with nothing blocked
   });
 
   // 2. A PRESS: +10%, squish, maybe jealousy
@@ -287,7 +288,7 @@
   let helperOn = false;
 
   function helperSync() {
-    if (!helperOn) return;
+    if (!helperOn || !started) return;                       // a tab that hasn't started never overwrites the blocks
     const list = Object.keys(keys).filter(code => keys[code].blocked);
     fetch(HELPER + '/state', {
       method: 'POST',
