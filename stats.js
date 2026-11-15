@@ -32,6 +32,32 @@
   const favPct = document.getElementById('fav-pct');
   const least = document.getElementById('least');
 
+  // notes.txt: a built-in notepad between the keyboard and the 3 cards.
+  // feelings.js makes blocked keys refuse to type in it, so the
+  // "my keyboard is broken" bit works on ANY laptop, no helper needed.
+  const cards = document.querySelector('#dashboard .cards');
+  const padCard = document.createElement('div');
+  padCard.className = 'card';
+  padCard.id = 'notepad-card';
+  padCard.innerHTML = `
+    <h3>notes.txt <small>try typing. the blocked keys won't let you.</small></h3>
+    <textarea id="notepad" spellcheck="false" autocomplete="off"
+      placeholder="type your very important essay here. the keys are watching."></textarea>
+    <p id="notepad-status">&nbsp;</p>
+  `;
+  if (cards) cards.before(padCard);
+  const pad = document.getElementById('notepad');
+  const padStatus = document.getElementById('notepad-status');
+  const focusPad = () => setTimeout(() => pad.focus({ preventScroll: true }), 0);
+
+  // START / Sara's buttons: put the cursor back in the notepad so typing just works
+  ['ctrl:start', 'ctrl:resume'].forEach(n => document.addEventListener(n, focusPad));
+  document.addEventListener('ctrl:reset', () => {
+    pad.value = '';
+    padStatus.innerHTML = '&nbsp;';
+    focusPad();
+  });
+
   // average % -> morale word: 60+ thriving, 40+ stable, 20+ tense, under 20 doomed
   function label(avg) {
     if (avg >= 60) return 'thriving';

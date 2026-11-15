@@ -73,6 +73,55 @@
 #fav-key { font-family: 'Dela Gothic One', sans-serif; font-weight: 400; }
 #least { margin: 4px 0 0; font-size: 12px; color: var(--hot); }
 
+/* notes.txt: lined paper notepad between the keyboard and the cards */
+#notepad-card {
+  padding: 14px 16px 10px;
+  margin-bottom: 14px;
+  transform: rotate(-0.6deg);
+}
+#notepad-card h3 {
+  font-family: 'Dela Gothic One', sans-serif;
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+#notepad-card h3 small {
+  font-family: 'Gaegu', cursive;
+  font-size: 17px;
+  font-weight: 400;
+  margin-left: 8px;
+  opacity: .75;
+}
+#notepad {
+  display: block;
+  width: 100%;
+  height: 110px;
+  resize: vertical;
+  padding: 4px 10px;
+  font-family: 'Gaegu', cursive;
+  font-size: 22px;
+  line-height: 28px;
+  color: var(--ink);
+  border: 2.5px solid var(--ink);
+  border-radius: 10px;
+  outline: none;
+  background: #fff repeating-linear-gradient(transparent 0 27px, var(--blush) 27px 28px);
+  background-attachment: local;
+}
+#notepad:focus { box-shadow: 3px 3px 0 var(--hot); }
+#notepad-status {
+  margin: 6px 0 0;
+  min-height: 1.2em;
+  font-family: 'Gaegu', cursive;
+  font-size: 19px;
+  color: var(--hot);
+}
+#notepad-status.nope { animation: nope-shake .35s; }
+@keyframes nope-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
 /* narrow window: cards stack */
 @media (max-width: 800px) {
   .cards { grid-template-columns: 1fr; }
