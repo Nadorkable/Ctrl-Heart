@@ -19,6 +19,9 @@
                        // => an ignored key at 20% blocks after ~30s, at 30% after ~45s,
                        //    at 40% after ~60s. in a 60s pitch the first blocks land ~30s.
                        //    faster: fadeEverySecs 1.2 · slower: fadeEverySecs 2
+    // impatient keys: they fade this many times faster than everyone else.
+    // ignore them and Q + Z (x4) block you after ~8-23s, X + J (x3) after ~10-30s.
+    impatient: { KeyQ: 4, KeyZ: 4, KeyX: 3, KeyJ: 3 },
     jealousAfter: 5,   // same key this many times in a row...
     jealousSecs: 3,    // ...makes its neighbours jealous for this long
     bounceMs: 150,     // how long the squish class stays on
@@ -198,7 +201,8 @@
     if (paused) return;                                      // paused = nobody fades
     for (const code in keys) {
       const k = keys[code];
-      if (!k.blocked) setPct(k, k.pct - SETTINGS.fadeAmount);
+      const speed = SETTINGS.impatient[code] || 1;          // impatient keys lose more per tick
+      if (!k.blocked) setPct(k, k.pct - SETTINGS.fadeAmount * speed);
     }
     render();
   }
