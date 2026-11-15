@@ -142,7 +142,18 @@
     if (!k) return;                                          // not on our keyboard
     const isModifier = /^(Control|Meta|Alt|Shift)/.test(e.code);
     if ((e.ctrlKey || e.metaKey) && !isModifier) return;     // let Ctrl+R / Cmd+R still refresh
-    e.preventDefault();                                      // stop Space scrolling, Tab jumping
+
+    if (e.target && e.target.id === 'notepad') {
+      // typing in notes.txt: normal keys type, blocked keys refuse
+      if (k.blocked && !paused) {
+        e.preventDefault();                                  // nothing appears. it's over.
+        if (!e.repeat) nope(k);
+        return;
+      }
+      if (e.code === 'Tab') e.preventDefault();              // stay in the notepad
+    } else {
+      e.preventDefault();                                    // stop Space scrolling, Tab jumping
+    }
     if (e.repeat || helperOn) return;                        // laptop-wide mode: the helper reports presses
     press(e.code);
   });
@@ -162,6 +173,24 @@
 
     bounce(k);
     render();
+  }
+
+  // a blocked key was pressed in notes.txt: say so under the notepad
+  const NOPE_LINES = [
+    '{key} blocked you. it is not typing that.',
+    '{key} has left the chat. and the keyboard.',
+    '{key} is ignoring you.',
+    '{key}: "new phone who dis"',
+    'you pressed {key}. {key} did not care.',
+  ];
+  function nope(k) {
+    const status = document.getElementById('notepad-status');
+    if (!status) return;
+    const line = NOPE_LINES[Math.floor(Math.random() * NOPE_LINES.length)];
+    status.textContent = line.replaceAll('{key}', k.label);
+    status.classList.remove('nope');
+    void status.offsetWidth;                                 // replay the little shake
+    status.classList.add('nope');
   }
 
   // 3. EVERY FEW SECONDS: everyone fades, 0% = blocked
