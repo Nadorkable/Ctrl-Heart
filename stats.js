@@ -35,6 +35,37 @@
     focusPad();
   });
 
+  // "keys that have blocked u": a card under the group chat listing every key
+  // that blocked us, in the order they did it (feelings.js sends 'keydrama' blocked)
+  const gcCard = document.getElementById('gc') && document.getElementById('gc').closest('.card');
+  const blockedCard = document.createElement('div');
+  blockedCard.className = 'card';
+  blockedCard.id = 'blocked-card';
+  blockedCard.innerHTML = `
+    <h3>keys that have blocked u <span id="blocked-count"></span></h3>
+    <div id="blocked-list"><span class="blocked-none">nobody (yet)</span></div>
+  `;
+  if (gcCard) gcCard.after(blockedCard);
+  else if (cards) cards.append(blockedCard);
+  const blockedList = document.getElementById('blocked-list');
+  const blockedCount = document.getElementById('blocked-count');
+
+  function clearBlocked() {
+    blockedList.innerHTML = '<span class="blocked-none">nobody (yet)</span>';
+    blockedCount.textContent = '';
+  }
+  document.addEventListener('keydrama', e => {
+    if (e.detail.type !== 'blocked') return;
+    const none = blockedList.querySelector('.blocked-none');
+    if (none) none.remove();
+    const chip = document.createElement('span');
+    chip.className = 'blocked-chip';
+    chip.textContent = e.detail.key;
+    blockedList.append(chip);
+    blockedCount.textContent = '(' + blockedList.children.length + ')';
+  });
+  document.addEventListener('ctrl:reset', clearBlocked);
+
   // average % -> morale word: 60+ thriving, 40+ stable, 20+ tense, under 20 doomed
   function label(avg) {
     if (avg >= 60) return 'thriving';

@@ -15,6 +15,7 @@
     "header   header"
     "notes    drama"
     "keyboard gc"
+    "keyboard blocked"
     "legend   controls";
   column-gap: 26px;
   row-gap: 16px;
@@ -27,6 +28,7 @@
 #dashboard .cards        { display: contents; }   /* its 3 cards join the grid */
 #dashboard .card:has(#drama) { grid-area: drama; }
 #dashboard .card:has(#gc)    { grid-area: gc; }
+#dashboard #blocked-card     { grid-area: blocked; }
 #dashboard #fav              { display: none; }    /* favourite child: removed */
 
 /* Sara's START / PAUSE / RESET: a little row under the chat instead of floating */
@@ -84,6 +86,34 @@
   margin: 0 0 10px;
 }
 
+/* "keys that have blocked u": striped little keycaps, in blocking order */
+#dashboard #blocked-card { min-height: 0; transform: rotate(-1deg); }
+#blocked-count { font-family: 'Poppins', sans-serif; font-size: 13px; color: var(--hot); }
+#blocked-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 2px 2px 4px;          /* room for the chips' shadow, no fake scrollbar */
+}
+.blocked-none { font-family: 'Gaegu', cursive; font-size: 18px; opacity: .6; }
+.blocked-chip {
+  font-family: 'Dela Gothic One', sans-serif;
+  font-size: 12px;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 0 2px 0 var(--ink);
+  background: repeating-linear-gradient(45deg, #ccc, #ccc 5px, #aaa 5px, #aaa 10px);
+  text-decoration: line-through;
+  animation: chip-in .25s ease-out;
+}
+@keyframes chip-in {
+  from { transform: scale(.4) rotate(-12deg); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
 /* notes.txt: lined paper notepad (top left) */
 #notepad-card {
   padding: 14px 16px 10px;
@@ -137,6 +167,6 @@
   #dashboard {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
-      "header" "notes" "keyboard" "legend" "controls" "drama" "gc";
+      "header" "notes" "keyboard" "legend" "controls" "drama" "gc" "blocked";
   }
 }

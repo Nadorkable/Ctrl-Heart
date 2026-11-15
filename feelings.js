@@ -23,6 +23,9 @@
     // impatient keys: they fade this many times faster than everyone else.
     // ignore them and Q + Z (x4) block you after ~3-8s, X + J (x3) after ~4-10s.
     impatient: { KeyQ: 4, KeyZ: 4, KeyX: 3, KeyJ: 3 },
+    // rage-quitters: these keys block you this many seconds after START (and after RESET),
+    // no matter what you do. A opens the show.
+    rageQuit: { KeyA: 2 },
     jealousAfter: 5,   // same key this many times in a row...
     jealousSecs: 3,    // ...makes its neighbours jealous for this long
     bounceMs: 150,     // how long the squish class stays on
@@ -138,7 +141,21 @@
     render();
     setInterval(fade, SETTINGS.fadeEverySecs * 1000);
     helperSync();                                            // laptop mode: a fresh game starts with nothing blocked
+    scheduleRageQuits();
   });
+
+  // rage-quitters (SETTINGS.rageQuit) block you a few seconds into every game
+  let rageTimers = [];
+  function scheduleRageQuits() {
+    rageTimers.forEach(clearTimeout);
+    rageTimers = Object.entries(SETTINGS.rageQuit).map(([code, secs]) =>
+      setTimeout(() => {
+        const k = keys[code];
+        if (!k || k.blocked) return;
+        setPct(k, 0);                                        // straight to 0% = blocked (+ drama, + laptop mode)
+        render();
+      }, secs * 1000));
+  }
 
   // 2. A PRESS: +10%, squish, maybe jealousy
   document.addEventListener('keydown', e => {
@@ -276,6 +293,7 @@
     paused = false;
     render();
     helperSync();                                            // laptop-wide mode: unblock everything
+    scheduleRageQuits();                                     // A rage-quits again 2s into the new game
   });
 
   // 5. LAPTOP-WIDE MODE (helper/ctrlheart_helper.py, Windows)
