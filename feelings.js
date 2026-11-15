@@ -15,10 +15,10 @@
     startMax: 60,
     boost: 10,         // +% per press (max 100)
     fadeAmount: 1,     // every tick, every key loses this many %...
-    fadeEverySecs: 2,  // ...and a tick happens every 2 sec
-                       // => an ignored key at 20% blocks after ~40s, at 30% after ~60s,
-                       //    at 50% after ~100s. in a 60s pitch only the lowest few block.
-                       //    faster: fadeEverySecs 1.5 · slower: fadeEverySecs 3
+    fadeEverySecs: 1.5,// ...and a tick happens every 1.5 sec
+                       // => an ignored key at 20% blocks after ~30s, at 30% after ~45s,
+                       //    at 40% after ~60s. in a 60s pitch the first blocks land ~30s.
+                       //    faster: fadeEverySecs 1.2 · slower: fadeEverySecs 2
     jealousAfter: 5,   // same key this many times in a row...
     jealousSecs: 3,    // ...makes its neighbours jealous for this long
     bounceMs: 150,     // how long the squish class stays on
