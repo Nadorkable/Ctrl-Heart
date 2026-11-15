@@ -201,10 +201,25 @@
   // (Web Audio), so there are no sound files to download or lose.
   let audio = null;
   let lastSound = 0;
-  // browsers only allow sound after a click, and START TYPING is that click
-  document.addEventListener('ctrl:start', () => {
-    try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (err) { audio = null; }
-  });
+  // browsers only allow sound after the person clicks or types, so the sound
+  // engine is switched on (and woken up) by EVERY click / key press, not just START.
+  // (Safari also wants a tiny silent sound played during that click to unlock.)
+  function unlockAudio() {
+    try {
+      if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state !== 'running') {
+        audio.resume();
+        const silent = audio.createBuffer(1, 1, 22050);
+        const src = audio.createBufferSource();
+        src.buffer = silent;
+        src.connect(audio.destination);
+        src.start(0);
+      }
+    } catch (err) { /* no sound on this browser, everything else still works */ }
+  }
+  ['pointerdown', 'keydown', 'touchstart'].forEach(type =>
+    document.addEventListener(type, unlockAudio, { capture: true, passive: true }));
+  document.addEventListener('ctrl:start', unlockAudio);
 
   // one tone that slides from one pitch to another
   function tone(type, from, to, start, length, volume = 0.18) {
@@ -234,12 +249,12 @@
   ];
 
   function nopeSound() {
+    unlockAudio();
     if (!audio) return;
     const now = performance.now();
     if (now - lastSound < 120) return;                       // mashing a dead key = not a wall of noise
     lastSound = now;
-    if (audio.state === 'suspended') audio.resume();
-    SOUNDS[Math.floor(Math.random() * SOUNDS.length)]();
+    try { SOUNDS[Math.floor(Math.random() * SOUNDS.length)](); } catch (err) { /* stay quiet */ }
   }
 
   // a blocked key was pressed: silly sound + a roast under the notepad
