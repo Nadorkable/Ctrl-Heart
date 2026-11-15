@@ -14,7 +14,10 @@
     startMin: 30,      // each key starts at a random % between these two
     startMax: 70,
     boost: 10,         // +% per press (max 100)
-    fadePerSec: 2,     // -% every second for every key
+    fadePerSec: 1,     // how fast ignored keys lose happiness (% per second)
+    fadeEverySecs: 2,  // the keyboard only ticks down every 2 sec (calmer than every sec)
+                       // => an ignored key at 30% blocks after ~30s, at 50% after ~50s,
+                       //    so in a 60s pitch the first blocks land around 30s
     jealousAfter: 5,   // same key this many times in a row...
     jealousSecs: 3,    // ...makes its neighbours jealous for this long
     bounceMs: 150,     // how long the squish class stays on
@@ -126,7 +129,7 @@
       };
     });
     render();
-    setInterval(fade, 1000);
+    setInterval(fade, SETTINGS.fadeEverySecs * 1000);
   });
 
   // 2. A PRESS: +10%, squish, maybe jealousy
@@ -152,11 +155,12 @@
     render();
   });
 
-  // 3. EVERY SECOND: everyone fades, 0% = blocked
+  // 3. EVERY FEW SECONDS: everyone fades, 0% = blocked
   function fade() {
+    const loss = SETTINGS.fadePerSec * SETTINGS.fadeEverySecs;
     for (const code in keys) {
       const k = keys[code];
-      if (!k.blocked) setPct(k, k.pct - SETTINGS.fadePerSec);
+      if (!k.blocked) setPct(k, k.pct - loss);
     }
     render();
   }
