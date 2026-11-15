@@ -12,7 +12,7 @@
   const DRAMA_TEXT = {
     blocked: k => k + ' blocked you',
     jealous: k => k + ' is jealous',
-    fading:  k => k + ' is fading away',
+    fading:  k => k + ' is sad',
     thriving: k => k + ' is thriving'
   };
 
