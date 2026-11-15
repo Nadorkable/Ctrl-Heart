@@ -37,6 +37,7 @@
   let lastCode = null;
   let streak = 0;
   let started = false;
+  let paused = false;    // ctrl:pause / ctrl:resume (Sara's buttons)
 
   window.keys = keys;
   window.totalPresses = 0;
@@ -141,7 +142,7 @@
     const isModifier = /^(Control|Meta|Alt|Shift)/.test(e.code);
     if ((e.ctrlKey || e.metaKey) && !isModifier) return;     // let Ctrl+R / Cmd+R still refresh
     e.preventDefault();                                      // stop Space scrolling, Tab jumping
-    if (e.repeat || k.blocked) return;                       // holding a key / blocked = nothing
+    if (e.repeat || k.blocked || paused) return;             // holding a key / blocked / paused = nothing
 
     totalPresses++;
     window.totalPresses = totalPresses;
@@ -158,10 +159,33 @@
 
   // 3. EVERY FEW SECONDS: everyone fades, 0% = blocked
   function fade() {
+    if (paused) return;                                      // paused = nobody fades
     for (const code in keys) {
       const k = keys[code];
       if (!k.blocked) setPct(k, k.pct - SETTINGS.fadeAmount);
     }
     render();
   }
+
+  // 4. PAUSE / RESUME / RESET (Sara's buttons send these signals)
+  document.addEventListener('ctrl:pause',  () => { paused = true; });
+  document.addEventListener('ctrl:resume', () => { paused = false; });
+
+  // reset = everyone gets a fresh random %, nobody is blocked, counters go back to 0
+  document.addEventListener('ctrl:reset', () => {
+    Object.values(keys).forEach(k => {
+      k.pct = rand(SETTINGS.startMin, SETTINGS.startMax);
+      k.blocked = false;
+      k.jealousUntil = 0;
+      k.uses = 0;
+      clearTimeout(k.bounceTimer);
+      k.el.classList.remove('bounce');
+    });
+    totalPresses = 0;
+    window.totalPresses = 0;
+    lastCode = null;                                         // forget the "same key 5x in a row" streak
+    streak = 0;
+    paused = false;
+    render();
+  });
 })();
