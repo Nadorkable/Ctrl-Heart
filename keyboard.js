@@ -1,10 +1,10 @@
 // keyboard.js: [label, code, width]
 const LAYOUT = [
-  [['`','Backquote'],['1','Digit1'],['2','Digit2'],['3','Digit3'],['4','Digit4'],['5','Digit5'],['6','Digit6'],['7','Digit7'],['8','Digit8'],['9','Digit9'],['0','Digit0'],['-','Minus'],['=','Equal'],['Delete','Backspace',1.7]],
+  [['`','Backquote'],['1','Digit1'],['2','Digit2'],['3','Digit3'],['4','Digit4'],['5','Digit5'],['6','Digit6'],['7','Digit7'],['8','Digit8'],['9','Digit9'],['0','Digit0'],['-','Minus'],['=','Equal'],['Backspace','Backspace',1.7]],
   [['Tab','Tab',1.5],['Q','KeyQ'],['W','KeyW'],['E','KeyE'],['R','KeyR'],['T','KeyT'],['Y','KeyY'],['U','KeyU'],['I','KeyI'],['O','KeyO'],['P','KeyP'],['[','BracketLeft'],[']','BracketRight'],['\\','Backslash',1.2]],
-  [['Caps','CapsLock',1.8],['A','KeyA'],['S','KeyS'],['D','KeyD'],['F','KeyF'],['G','KeyG'],['H','KeyH'],['J','KeyJ'],['K','KeyK'],['L','KeyL'],[';','Semicolon'],["'",'Quote'],['Return','Enter',1.9]],
+  [['Caps','CapsLock',1.8],['A','KeyA'],['S','KeyS'],['D','KeyD'],['F','KeyF'],['G','KeyG'],['H','KeyH'],['J','KeyJ'],['K','KeyK'],['L','KeyL'],[';','Semicolon'],["'",'Quote'],['Enter','Enter',1.9]],
   [['Shift','ShiftLeft',2.3],['Z','KeyZ'],['X','KeyX'],['C','KeyC'],['V','KeyV'],['B','KeyB'],['N','KeyN'],['M','KeyM'],[',','Comma'],['.','Period'],['/','Slash'],['Shift','ShiftRight',2.3]],
-  [['fn','Fn'],['Ctrl','ControlLeft'],['Opt','AltLeft'],['Cmd','MetaLeft',1.3],['Space','Space',5.5],['Cmd','MetaRight',1.3],['Opt','AltRight'],['←','ArrowLeft'],['↑↓','ArrowUp'],['→','ArrowRight']]
+  [['Ctrl','ControlLeft',1.3],['Win','MetaLeft'],['Alt','AltLeft',1.2],['Space','Space',6],['Alt','AltRight',1.2],['Ctrl','ControlRight',1.3],['←','ArrowLeft'],['↑','ArrowUp'],['↓','ArrowDown'],['→','ArrowRight']]
 ];
 
 const keyboardEl = document.getElementById('keyboard');
