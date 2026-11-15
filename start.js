@@ -2,7 +2,9 @@
 // Fills Sara's #load-fill and #load-text, then swaps #start -> #dashboard.
 
 (() => {
-  const SETTINGS = { stuckAt: 87, stuckMs: 1200, tickMs: 30 };
+  // whole load takes ~1.5 sec: 87 ticks x 12ms, then a 0.4 sec "stuck" hiccup
+  // (set stuckMs to 0 to drop the hiccup completely)
+  const SETTINGS = { stuckAt: 87, stuckMs: 400, tickMs: 12 };
 
   const btn = document.getElementById('start-btn');
   const fill = document.getElementById('load-fill');   // Sara's markup; may not exist yet
