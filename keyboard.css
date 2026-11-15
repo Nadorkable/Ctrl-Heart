@@ -55,6 +55,7 @@
   background: repeating-linear-gradient(45deg, #ccc, #ccc 6px, #aaa 6px, #aaa 12px);
   text-decoration: line-through;
 }
+.key.thriving .face { color: var(--ink, #2B0F1E); }
 
 /* press squish (Nada adds/removes this class) */
 .key.bounce { transform: translateY(3px); box-shadow: 0 0 0 var(--ink, #2B0F1E); }
