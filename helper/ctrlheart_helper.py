@@ -58,18 +58,34 @@ SCAN_EXTENDED = {
 WM_KEYDOWN, WM_KEYUP, WM_SYSKEYDOWN, WM_SYSKEYUP = 0x100, 0x101, 0x104, 0x105
 LLKHF_EXTENDED, LLKHF_INJECTED = 0x01, 0x10
 
+VERSION = "v3 (Esc x3 needs 3 real presses, shows swallowed keys)"
+
 lock = threading.Lock()
 blocked = set()          # codes the website says blocked you
 paused = False           # website paused -> block nothing
-panicked = False         # Esc x3 -> block nothing until restart
+panicked = False         # Esc x3 -> block nothing until the site resets
 held = set()             # keys currently held down (to skip auto-repeat)
 swallowed = set()        # keys whose key-down we swallowed (swallow their key-up too)
 esc_times = []
 clients = []             # one queue per open website tab
+last_swallow_log = {}    # key -> time we last printed "swallowed" for it
+
+# printing happens on its own thread: if the black window is busy (e.g. you
+# clicked in it and selected text), the keyboard hook must never wait for it,
+# or Windows quietly switches the hook off
+log_queue = queue.Queue()
 
 
 def log(msg):
-    print(time.strftime("%H:%M:%S"), msg, flush=True)
+    log_queue.put(time.strftime("%H:%M:%S") + " " + msg)
+
+
+def printer():
+    while True:
+        print(log_queue.get(), flush=True)
+
+
+threading.Thread(target=printer, daemon=True).start()
 
 
 def code_of(data):
@@ -98,6 +114,9 @@ def on_key(msg, data):
 
     if down:
         if code == "Escape":                          # emergency: Esc 3x within 1.5 sec
+            if code in held:
+                return True                           # holding Esc (auto-repeat) is NOT 3 presses
+            held.add(code)
             now = time.time()
             esc_times.append(now)
             del esc_times[:-3]
@@ -114,6 +133,10 @@ def on_key(msg, data):
             if code not in held:                      # tell the site once per press (it plays a silly sound)
                 held.add(code)
                 send_to_site("!" + code)
+                now = time.time()
+                if now - last_swallow_log.get(code, 0) > 1:
+                    last_swallow_log[code] = now
+                    log(f"swallowed {code}: it did nothing on the laptop")
             listener.suppress_event()                 # this key does nothing, anywhere
         if code in held:
             return True                               # holding the key down: count it once
@@ -157,6 +180,7 @@ class Handler(BaseHTTPRequestHandler):
         new_blocked = set(state.get("blocked", []))
         with lock:
             changed = new_blocked != blocked or bool(state.get("paused")) != paused
+            newly = sorted(new_blocked - blocked - NEVER_BLOCK)
             blocked.clear()
             blocked.update(new_blocked)
             paused = bool(state.get("paused"))
@@ -175,8 +199,11 @@ class Handler(BaseHTTPRequestHandler):
             elif panicked:
                 msg = ("NOT blocking (Esc x3 is on). the site has blocked: " + ", ".join(real) +
                        ". click RESET on the site to start blocking again.")
+            elif newly:
+                msg = (", ".join(newly) + " blocked you on the whole laptop  (" +
+                       str(len(real)) + " keys blocked now)")
             else:
-                msg = "blocked on the whole laptop: " + ", ".join(real)
+                msg = str(len(real)) + " keys blocked on the whole laptop"
             log(msg)
         self.send_response(204)
         self.cors()
@@ -218,7 +245,7 @@ listener = keyboard.Listener(win32_event_filter=on_key)
 
 if __name__ == "__main__":
     print("=" * 60)
-    print(" Ctrl+Heart laptop-wide mode")
+    print(" Ctrl+Heart laptop-wide mode   " + VERSION)
     print(" open: https://nadorkable.github.io/Ctrl-Heart/?laptop")
     print(" EMERGENCY: press Esc 3x fast, or just close this window")
     print("=" * 60, flush=True)
@@ -231,4 +258,5 @@ if __name__ == "__main__":
         pass
     finally:
         listener.stop()
-        log("helper stopped, keyboard back to normal")
+        time.sleep(0.3)                               # let the printer thread finish
+        print("helper stopped, keyboard back to normal", flush=True)
