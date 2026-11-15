@@ -1,0 +1,30 @@
+/* live drama */
+#drama { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+#drama li {
+  font-family: 'Gaegu', cursive;
+  font-size: 18px;
+  padding: 4px 10px;
+  border: 2px solid var(--ink, #2B0F1E);
+  border-radius: 8px;
+  animation: slidein .3s ease-out;
+}
+#drama li.blocked  { background: #ccc; }
+#drama li.jealous  { background: #FF8A80; }
+#drama li.fading   { background: #A9D2FF; }
+#drama li.thriving { background: #FF8FBD; }
+
+/* group chat */
+#gc { font-family: 'Gaegu', cursive; font-size: 17px; display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+#gc .msg {
+  background: var(--blush, #FFD0E2);
+  border: 2px solid var(--ink, #2B0F1E);
+  border-radius: 10px;
+  padding: 4px 10px;
+  animation: slidein .3s ease-out;
+}
+.card:has(#gc) { transform: rotate(1.5deg); }
+
+@keyframes slidein {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
