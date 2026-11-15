@@ -82,6 +82,7 @@
     if (k.pct === 0 && !k.blocked) {
       k.blocked = true;                          // forever. no unblocking.
       drama('blocked', k);
+      helperSync();                              // laptop-wide mode: block it everywhere
     } else if (before >= SETTINGS.fadingBelow && k.pct < SETTINGS.fadingBelow) {
       drama('fading', k);
     } else if (before < SETTINGS.thrivingFrom && k.pct >= SETTINGS.thrivingFrom) {
@@ -142,20 +143,26 @@
     const isModifier = /^(Control|Meta|Alt|Shift)/.test(e.code);
     if ((e.ctrlKey || e.metaKey) && !isModifier) return;     // let Ctrl+R / Cmd+R still refresh
     e.preventDefault();                                      // stop Space scrolling, Tab jumping
-    if (e.repeat || k.blocked || paused) return;             // holding a key / blocked / paused = nothing
+    if (e.repeat || helperOn) return;                        // laptop-wide mode: the helper reports presses
+    press(e.code);
+  });
+
+  function press(code) {
+    const k = keys[code];
+    if (!started || !k || k.blocked || paused) return;      // blocked / paused = nothing
 
     totalPresses++;
     window.totalPresses = totalPresses;
     k.uses++;
     setPct(k, k.pct + SETTINGS.boost);
 
-    streak = (e.code === lastCode) ? streak + 1 : 1;
-    lastCode = e.code;
+    streak = (code === lastCode) ? streak + 1 : 1;
+    lastCode = code;
     if (streak % SETTINGS.jealousAfter === 0) makeNeighboursJealous(k);
 
     bounce(k);
     render();
-  });
+  }
 
   // 3. EVERY FEW SECONDS: everyone fades, 0% = blocked
   function fade() {
@@ -168,8 +175,8 @@
   }
 
   // 4. PAUSE / RESUME / RESET (Sara's buttons send these signals)
-  document.addEventListener('ctrl:pause',  () => { paused = true; });
-  document.addEventListener('ctrl:resume', () => { paused = false; });
+  document.addEventListener('ctrl:pause',  () => { paused = true;  helperSync(); });
+  document.addEventListener('ctrl:resume', () => { paused = false; helperSync(); });
 
   // reset = everyone gets a fresh random %, nobody is blocked, counters go back to 0
   document.addEventListener('ctrl:reset', () => {
@@ -187,5 +194,43 @@
     streak = 0;
     paused = false;
     render();
+    helperSync();                                            // laptop-wide mode: unblock everything
   });
+
+  // 5. LAPTOP-WIDE MODE (helper/ctrlheart_helper.py, Windows)
+  //    Only when the link ends in ?laptop, so normal visitors never see a
+  //    "this site wants to access your local network" popup.
+  //    The helper sends every key pressed anywhere on the laptop, and we tell it
+  //    which keys blocked you so it can swallow them in every app.
+  const HELPER = 'http://127.0.0.1:8787';
+  const wantHelper = new URLSearchParams(location.search).has('laptop');
+  let helperOn = false;
+
+  function helperSync() {
+    if (!helperOn) return;
+    const list = Object.keys(keys).filter(code => keys[code].blocked);
+    fetch(HELPER + '/state', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },             // "simple" request, no extra round trip
+      body: JSON.stringify({ blocked: list, paused }),
+    }).catch(() => {});
+  }
+
+  function connectHelper() {
+    const es = new EventSource(HELPER + '/events');
+    es.onopen = () => {
+      helperOn = true;
+      helperSync();
+      document.dispatchEvent(new CustomEvent('ctrl:helper', { detail: { on: true } }));
+    };
+    es.onmessage = e => press(e.data);                       // a key pressed anywhere on the laptop
+    es.onerror = () => {
+      es.close();
+      if (helperOn) document.dispatchEvent(new CustomEvent('ctrl:helper', { detail: { on: false } }));
+      helperOn = false;                                      // back to normal website typing
+      setTimeout(connectHelper, 3000);                       // keep trying (helper may start later)
+    };
+  }
+
+  if (wantHelper) connectHelper();
 })();
