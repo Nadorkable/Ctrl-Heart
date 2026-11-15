@@ -54,10 +54,22 @@
     setTimeout(nextMessage, 5000 + Math.random() * 2000);
   }
 
-  document.addEventListener('keydrama', e => {
-    recent.push(e.detail);
-    addDrama(e.detail);
-  });
+let dramaQueue = [];
 
-  document.addEventListener('ctrl:start', () => setTimeout(nextMessage, 3000));
+document.addEventListener('keydrama', e => {
+  recent.push(e.detail);          // chat still reacts to the latest event
+  dramaQueue.push(e.detail);
+  if (dramaQueue.length > 5) dramaQueue.shift();   // drop the oldest so it never backs up
+});
+
+function dramaTick() {
+  const d = dramaQueue.pop();     // show the NEWEST, so it stays relevant
+  dramaQueue = [];                // throw away the rest
+  if (d) addDrama(d);
+}
+
+  document.addEventListener('ctrl:start', () => {
+    setTimeout(nextMessage, 3000);
+    setInterval(dramaTick, 4000);
+  });
 })();
