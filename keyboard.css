@@ -1,0 +1,72 @@
+#keyboard {
+  background: #fff;
+  border: 3px solid var(--ink, #2B0F1E);
+  border-radius: 14px;
+  box-shadow: 5px 5px 0 var(--ink, #2B0F1E);
+  padding: 14px;
+  margin: 18px 0 10px;
+}
+
+.row { display: flex; gap: 5px; margin-bottom: 5px; }
+
+.key {
+  position: relative;
+  flex: 1;
+  height: 45px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 2px solid var(--ink, #2B0F1E);
+  border-radius: 8px;
+  box-shadow: 0 3px 0 var(--ink, #2B0F1E);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  user-select: none;
+  transition: background .2s;
+}
+
+.pct { font-size: 10px; font-weight: 400; opacity: .8; }
+
+.face {
+  position: absolute;
+  top: -6px; right: -4px;
+  background: #fff;
+  border: 1.5px solid var(--ink, #2B0F1E);
+  border-radius: 6px;
+  padding: 0 3px;
+  font-family: 'Gaegu', cursive;
+  font-size: 11px;
+  line-height: 1.2;
+}
+.face:empty { display: none; }
+
+/* 7 moods */
+.key.thriving { background: #FF3D8B; color: #fff; }
+.key.happy    { background: #FF8FBD; }
+.key.fine     { background: #FFD0E2; }
+.key.meh      { background: #fff; }
+.key.sad      { background: #A9D2FF; }
+.key.jealous  { background: #FF8A80; }
+.key.blocked  {
+  background: repeating-linear-gradient(45deg, #ccc, #ccc 6px, #aaa 6px, #aaa 12px);
+  text-decoration: line-through;
+}
+
+/* press squish (Nada adds/removes this class) */
+.key.bounce { transform: translateY(3px); box-shadow: 0 0 0 var(--ink, #2B0F1E); }
+
+/* legend */
+.legend { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-bottom: 18px; font-family: 'Gaegu', cursive; font-size: 18px; }
+.legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.swatch { width: 18px; height: 18px; border: 2px solid var(--ink, #2B0F1E); border-radius: 4px; display: inline-block; }
+.swatch.thriving { background: #FF3D8B; }
+.swatch.happy    { background: #FF8FBD; }
+.swatch.fine     { background: #FFD0E2; }
+.swatch.meh      { background: #fff; }
+.swatch.sad      { background: #A9D2FF; }
+.swatch.jealous  { background: #FF8A80; }
+.swatch.blocked  { background: repeating-linear-gradient(45deg, #ccc, #ccc 3px, #aaa 3px, #aaa 6px); }
