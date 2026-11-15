@@ -1,0 +1,79 @@
+/* stats.css (Nada): dashboard layout, header pills, favourite child */
+
+/* page layout: header, keyboard box, then the 3 cards */
+#dashboard {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+}
+
+/* header: title left, 2 pills right */
+#dashboard header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+#dashboard header h1 {
+  font-family: 'Dela Gothic One', sans-serif;
+  font-size: 34px;
+  line-height: 1;
+  margin: 0 auto 0 0;            /* pushes the pills to the right */
+}
+#dashboard header .plus { color: var(--hot); }
+
+#count, #morale {
+  font-family: 'Dela Gothic One', sans-serif;
+  font-size: 14px;
+  padding: 7px 16px;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 3px 3px 0 var(--ink);
+  white-space: nowrap;
+  transition: background .3s;
+}
+
+/* morale pill colour follows the mood (stats.js sets data-mood) */
+#morale[data-mood="thriving"] { background: var(--hot); color: #fff; }
+#morale[data-mood="stable"]   { background: var(--mint); }
+#morale[data-mood="tense"]    { background: var(--red); }
+#morale[data-mood="doomed"]   { background: var(--ink); color: var(--yel); }
+
+/* the 3 cards side by side */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+.cards .card {
+  padding: 14px 16px 16px;
+  min-height: 190px;
+}
+.cards .card h3 {
+  font-family: 'Dela Gothic One', sans-serif;
+  font-size: 15px;
+  margin: 0 0 10px;
+}
+
+/* favourite child card */
+#fav { text-align: center; }
+#mascot {
+  display: block;
+  width: 76px;
+  margin: 2px auto 6px;
+  animation: mascot-bob 1.6s ease-in-out infinite;
+}
+@keyframes mascot-bob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50%      { transform: translateY(-4px) rotate(2deg); }
+}
+#fav-line { margin: 0; font-size: 14px; }
+#fav-key { font-family: 'Dela Gothic One', sans-serif; font-weight: 400; }
+#least { margin: 4px 0 0; font-size: 12px; color: var(--hot); }
+
+/* narrow window: cards stack */
+@media (max-width: 800px) {
+  .cards { grid-template-columns: 1fr; }
+}
