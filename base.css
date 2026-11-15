@@ -1,0 +1,75 @@
+/* base.css (Nada): the sticker look everyone reuses */
+@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Gaegu:wght@400;700&family=Poppins:wght@400;600&display=swap');
+
+:root {
+  --ink: #2B0F1E;
+  --hot: #FF3D8B;
+  --pink: #FF8FBD;
+  --blush: #FFD0E2;
+  --blue: #A9D2FF;
+  --red: #FF8A80;
+  --yel: #FFE27A;
+  --mint: #BFF0D4;
+  --paper: #FFF3F7;
+  --dot: #F2BFD3;
+}
+
+* { box-sizing: border-box; }
+
+/* the hidden attribute always wins, so #start / #dashboard can be swapped */
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  color: var(--ink);
+  background: var(--paper) radial-gradient(var(--dot) 1px, transparent 1.4px) 0 0 / 18px 18px;
+}
+
+/* sticker card: thick outline + hard shadow, no blur ever */
+.card {
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+/* buttons */
+.btn {
+  font-family: 'Dela Gothic One', sans-serif;
+  font-size: 18px;
+  padding: 12px 22px;
+  background: var(--hot);
+  color: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  box-shadow: 4px 4px 0 var(--ink);
+  cursor: pointer;
+  transition: transform .08s, box-shadow .08s;
+}
+.btn:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--ink); }
+.btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--ink); }
+.btn:disabled { opacity: .55; cursor: wait; transform: none; box-shadow: 4px 4px 0 var(--ink); }
+
+.btn.ghost { background: #fff; color: var(--ink); }
+
+/* lets <summary class="btn ghost"> look like a button (no triangle) */
+summary.btn { list-style: none; display: inline-block; }
+summary.btn::-webkit-details-marker { display: none; }
+
+/* sticky note */
+.sticky {
+  font-family: 'Gaegu', cursive;
+  font-size: 20px;
+  line-height: 1.25;
+  background: var(--yel);
+  border: 2.5px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 14px 16px;
+  max-width: 220px;
+}
+
+/* tilts: use on 3-4 things, not everything */
+.tilt-l { transform: rotate(-2deg); }
+.tilt-r { transform: rotate(1.5deg); }

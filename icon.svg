@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- icon.svg (Nada): Ctrl key + heart key, sticker style -->
+  <!-- tile: hard shadow, then pink tile with ink outline -->
+  <rect x="9" y="9" width="114" height="114" rx="28" fill="#2B0F1E"/>
+  <rect x="4" y="4" width="114" height="114" rx="28" fill="#FF8FBD" stroke="#2B0F1E" stroke-width="5"/>
+
+  <!-- Ctrl key -->
+  <rect x="17" y="45" width="44" height="40" rx="8" fill="#2B0F1E"/>
+  <rect x="14" y="41" width="44" height="40" rx="8" fill="#fff" stroke="#2B0F1E" stroke-width="4"/>
+  <text x="36" y="66" text-anchor="middle" font-family="'Dela Gothic One', 'Arial Black', sans-serif" font-weight="900" font-size="13" fill="#2B0F1E">Ctrl</text>
+
+  <!-- plus -->
+  <path d="M61 61h6M64 58v6" stroke="#2B0F1E" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- heart key -->
+  <rect x="73" y="45" width="44" height="40" rx="8" fill="#2B0F1E"/>
+  <rect x="70" y="41" width="44" height="40" rx="8" fill="#FF3D8B" stroke="#2B0F1E" stroke-width="4"/>
+  <path d="M92 74 C78 65 78 53 86 52 C89 52 91 54 92 56 C93 54 95 52 98 52 C106 53 106 65 92 74 Z" fill="#fff" stroke="#2B0F1E" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="88.5" cy="60" r="1.6" fill="#2B0F1E"/>
+  <circle cx="95.5" cy="60" r="1.6" fill="#2B0F1E"/>
+  <path d="M89 63.5 q3 2.5 6 0" fill="none" stroke="#2B0F1E" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- sparkle (top left) -->
+  <path d="M27 18 C28 25 30 27 37 28 C30 29 28 31 27 38 C26 31 24 29 17 28 C24 27 26 25 27 18 Z" fill="#FFE27A" stroke="#2B0F1E" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- blue dot (top right) -->
+  <circle cx="102" cy="22" r="6" fill="#A9D2FF" stroke="#2B0F1E" stroke-width="3"/>
+
+  <!-- squiggle (bottom right) -->
+  <path d="M84 102 q5 -7 10 0 t10 0" fill="none" stroke="#2B0F1E" stroke-width="3.5" stroke-linecap="round"/>
+</svg>
