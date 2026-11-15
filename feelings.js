@@ -11,13 +11,14 @@
 (() => {
   // every number in one place: tweak these while testing
   const SETTINGS = {
-    startMin: 30,      // each key starts at a random % between these two
-    startMax: 70,
+    startMin: 20,      // each key starts at a random % between these two
+    startMax: 60,
     boost: 10,         // +% per press (max 100)
-    fadePerSec: 1,     // how fast ignored keys lose happiness (% per second)
-    fadeEverySecs: 2,  // the keyboard only ticks down every 2 sec (calmer than every sec)
-                       // => an ignored key at 30% blocks after ~30s, at 50% after ~50s,
-                       //    so in a 60s pitch the first blocks land around 30s
+    fadeAmount: 1,     // every tick, every key loses this many %...
+    fadeEverySecs: 2,  // ...and a tick happens every 2 sec
+                       // => an ignored key at 20% blocks after ~40s, at 30% after ~60s,
+                       //    at 50% after ~100s. in a 60s pitch only the lowest few block.
+                       //    faster: fadeEverySecs 1.5 · slower: fadeEverySecs 3
     jealousAfter: 5,   // same key this many times in a row...
     jealousSecs: 3,    // ...makes its neighbours jealous for this long
     bounceMs: 150,     // how long the squish class stays on
@@ -157,10 +158,9 @@
 
   // 3. EVERY FEW SECONDS: everyone fades, 0% = blocked
   function fade() {
-    const loss = SETTINGS.fadePerSec * SETTINGS.fadeEverySecs;
     for (const code in keys) {
       const k = keys[code];
-      if (!k.blocked) setPct(k, k.pct - loss);
+      if (!k.blocked) setPct(k, k.pct - SETTINGS.fadeAmount);
     }
     render();
   }
